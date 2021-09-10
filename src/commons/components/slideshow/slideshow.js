@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {Animated, PanResponder, View, useWindowDimensions, Text } from 'react-native';
+import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } from 'react-native';
 
 import Units from '../../units';
 
@@ -19,8 +19,8 @@ const DIRECTIONS = {
 	RIGHT: 'RIGHT'
 };
 
-const getCardSize = ({height, width}) => {
-	const vertical = 56 + 16 + (16 * 3) + 56;
+const getCardSize = ({height, width}, stackLength) => {
+	const vertical = 56 + 16 + (16 * stackLength) + 56;
 	const horizontal = 16 * 2;
 
 	return {
@@ -28,7 +28,7 @@ const getCardSize = ({height, width}) => {
 		height: height - vertical
 	};
 };
-
+const translateYConfig = []
 const config = {
 	0: Units.x6,
 	1: Units.x3,
@@ -36,38 +36,43 @@ const config = {
 }
 
 const getInterpolations = ({stackLength, width}) => {
-	return Array(stackLength - 1).fill().reduce((total, current, key) => {
+	return Array(stackLength).fill().reduce((total, current, key) => {
+		const inputRange = [-width, 0, width];
+		const index = stackLength - key - 1;
+		// const initialScaleOut
+
 		if(key === 0) {
 			return [...total, {
 				scale: {
-					inputRange: [-width, 0, width],
+					inputRange,
 					outputRange: [1, 0.9, 1]
 				},
 				translateY: {
-					inputRange: [-width, 0, width],
-					outputRange: [Units.x6, Units.x3, Units.x6]
+					inputRange,
+					outputRange: [Units.x2 * index, Units.x2 * (index - 1), Units.x2 * index]
 				}
 			}]
 		} else {
-			const {scale, translateY} = total[key - 1];
+			const {scale} = total[key - 1] || {scale: [{outputRange:[1, 0.9, 1]}]};
+
 			return [...total, {
 				scale: {
-					inputRange: [-width, 0, width],
-					outputRange: [scale.outputRange[1], scale.outputRange[1]-0.1, scale.outputRange[1]]
+					inputRange,
+					outputRange: [scale.outputRange[1], scale.outputRange[1] - 0.1, scale.outputRange[1]]
 				},
 				translateY: {
-					inputRange: [-width, 0, width],
-					outputRange: [Units.x3, Units.x0, Units.x3]
+					inputRange,
+					outputRange: [Units.x2 * index, Units.x2 * (index - 1), Units.x2 * index]
 				}
 			}];
 		}
 	}, []);
 }
-
+// 16 padding between header and slideshow
 function Slideshow({data, stackLength}) {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const windowDimensions = useWindowDimensions();
-	const cardSize = getCardSize(windowDimensions);
+	const cardSize = getCardSize(windowDimensions, stackLength);
 	const pan = useRef(new Animated.Value(0)).current;
 	const previousDirections = useRef([]).current;
 	const interpolations = getInterpolations({stackLength, width: windowDimensions.width}).map(({scale, translateY}) => ([{
@@ -121,58 +126,52 @@ function Slideshow({data, stackLength}) {
 		{data.map((i, key) => {
 			const index = key - currentIndex;
 
+			// Swiped cards
 			if(currentIndex > key) {
 				return null
 			}
+
+			// Current card
 			if(currentIndex === key) {
 				return (
 					<Animated.View 
 						key={Math.random()}
 						{...panResponder.panHandlers}
-						style={{
-							...cardSize,
-							transform: [{ translateX: pan}, {translateY: Units.x6 }],
+						style={[styles.card, cardSize, {
+							transform: [{ translateX: pan}, {translateY: Units.x2 * (stackLength - index - 1)}],
 							backgroundColor: colors[key],
-							position: 'absolute',
-							borderRadius: Units.x1,
-							left: Units.x2
-						}
+						}]
 					} />
 				);
-			} else {
-				if(Math.abs(currentIndex - key) < stackLength) {
-					return (
-						<Animated.View 
-							key={Math.random()}
-							style={{
-								...cardSize,
-								left: Units.x2,
-								transform: interpolations[index - 1],
-								backgroundColor: colors[key],
-								position: 'absolute',
-								borderRadius: Units.x1
-							}
-						} />
-					);
-				} else {
-					if(index === 3) {
-						return (
-							<Animated.View 
-								key={Math.random()}
-								style={{
-									...cardSize,
-									left: Units.x2,
-									transform: [{scaleX: 0.8}],
-									backgroundColor: colors[key],
-									position: 'absolute',
-									borderRadius: Units.x1
-								}
-							} />
-						);
-					}
-					return null;
-				}
+			} 
+
+			// Cards in stack
+			if(Math.abs(currentIndex - key) < stackLength) {
+				return (
+					<Animated.View 
+						key={Math.random()}
+						style={[styles.card, cardSize, {
+							transform: interpolations[index - 1],
+							backgroundColor: colors[key],
+						}]
+					} />
+				);
 			}
+			
+			// Last card hidden under stack
+			if(index === stackLength) {
+				return (
+					<Animated.View 
+						key={Math.random()}
+						style={[styles.card, cardSize, {
+							transform: [interpolations[index - 1][0]],
+							backgroundColor: colors[key]
+						}]
+					} />
+				);
+			}
+			
+			return null;
 		}).reverse()}
 		<Text style={{position: 'absolute', bottom: 0}} onPress={undo}>Try again</Text>
 		</View>
@@ -182,5 +181,12 @@ function Slideshow({data, stackLength}) {
 Slideshow.defaultProps = {
 	stackLength: 3
 }
+
+const styles = StyleSheet.create({
+	card: {
+		borderRadius: Units.x1,
+		position: 'absolute'
+	}
+});
 
 export default Slideshow;

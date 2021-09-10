@@ -35,7 +35,9 @@ function Main({}) {
 				title="My Mars"
 				right={<Button onPress={console.log} icon="heart-outlined" />}
 			/>
+			<View style={{padding: 16}}>
 			<Slideshow data={[1,2,3,4,5,6]} />
+			</View>
 		</Fragment>
 	);
 }
