@@ -1,5 +1,10 @@
 import Units from '../../units';
 
+const Directions = {
+	left: -1,
+	right: 1
+};
+
 const getCardSize = ({height, width}, stackLength) => {
 	const vertical = 
 		// Header's height
@@ -38,7 +43,15 @@ const getInterpolationData = ({stackLength, width}) => {
 	}, []);
 }
 
+const getCardsLeft = ({total, currentIndex}) => {
+	const cardsLeft = total - currentIndex;
+
+	return `${cardsLeft} ${cardsLeft === 1 ? 'card' : 'cards'}`;
+}
+
 export {
+	Directions,
 	getCardSize,
+	getCardsLeft,
 	getInterpolationData
 };

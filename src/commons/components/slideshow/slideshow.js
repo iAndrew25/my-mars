@@ -1,7 +1,10 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect, forwardRef, useImperativeHandle} from 'react';
 import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } from 'react-native';
 
-import {getCardSize, getInterpolationData} from './slideshow.utils';
+import Fab from './fab/fab';
+import {Directions, getCardSize, getCardsLeft, getInterpolationData} from './slideshow.utils';
+
+import Colors from '../../colors';
 import Units from '../../units';
 
 const colors = {
@@ -15,13 +18,7 @@ const colors = {
 	7: 'black',
 }
 
-const DIRECTIONS = {
-	LEFT: 'LEFT',
-	RIGHT: 'RIGHT'
-};
-
-function Slideshow({data, stackLength}) {
-	const [currentIndex, setCurrentIndex] = useState(0);
+function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, ref) {
 	const windowDimensions = useWindowDimensions();
 	const cardSize = getCardSize(windowDimensions, stackLength);
 	const pan = useRef(new Animated.Value(0)).current;
@@ -35,11 +32,26 @@ function Slideshow({data, stackLength}) {
 		translateY: pan.interpolate(translateY)
 	}]));
 
-	const swipe = direction => () => {
-		pan.setValue(0);
-		previousDirections.push(direction);
-		setCurrentIndex(prevCurrentIndex => prevCurrentIndex + 1);
-	};
+	useImperativeHandle(ref, () => ({
+		undo
+	}));
+
+	const swipe = direction => {
+		Animated.spring(pan, {
+			toValue: direction * windowDimensions.width,
+			restDisplacementThreshold: 100,
+			restSpeedThreshold: 100,
+			useNativeDriver: true
+		}).start(() => {
+			pan.setValue(0);
+			previousDirections.push(direction);
+			onSwipe({direction, cardIndex: currentIndex});
+			setCurrentIndex(prevCurrentIndex => prevCurrentIndex + 1);
+		});
+	}
+
+	const swipeRight = () => swipe(Directions.right);
+	const swipeLeft = () => swipe(Directions.left);
 
 	const panResponder = useRef(
 		PanResponder.create({
@@ -55,12 +67,7 @@ function Slideshow({data, stackLength}) {
 						pan.setValue(0)
 					})
 				} else {
-					Animated.spring(pan, {
-						toValue: Math.sign(dx) * windowDimensions.width,
-						restDisplacementThreshold: 100,
-						restSpeedThreshold: 100,
-						useNativeDriver: true
-					}).start(swipe(Math.sign(dx)));
+					swipe(Math.sign(dx))
 				}
 			}
 		})
@@ -76,71 +83,109 @@ function Slideshow({data, stackLength}) {
 	}
 
 	return (
-		<View>
-		{data.map((i, key) => {
-			const index = key - currentIndex;
+		<View style={styles.wrapper}>
+			{data.map((i, key) => {
+				const index = key - currentIndex;
 
-			// Swiped cards
-			if(currentIndex > key) {
-				return null
-			}
+				// Swiped cards
+				if(currentIndex > key) {
+					return null
+				}
 
-			// Current card
-			if(currentIndex === key) {
-				return (
-					<Animated.View 
-						key={Math.random()}
-						{...panResponder.panHandlers}
-						style={[styles.card, cardSize, {
-							transform: [{ translateX: pan}, {translateY: Units.x2 * (stackLength - index - 1)}],
-							backgroundColor: colors[key],
-						}]
-					} />
-				);
-			} 
+				// Current card
+				if(currentIndex === key) {
+					return (
+						<Animated.View 
+							key={Math.random()} // temp
+							{...panResponder.panHandlers}
+							style={[styles.card, cardSize, {
+								transform: [{ translateX: pan}, {translateY: Units.x2 * (stackLength - index - 1)}],
+								backgroundColor: colors[key],
+							}]
+						} />
+					);
+				} 
 
-			// Cards in stack
-			if(Math.abs(currentIndex - key) < stackLength) {
-				return (
-					<Animated.View 
-						key={Math.random()}
-						style={[styles.card, cardSize, {
-							transform: interpolations[index - 1],
-							backgroundColor: colors[key],
-						}]
-					} />
-				);
-			}
-			
-			// Last card hidden under stack
-			if(index === stackLength) {
-				return (
-					<Animated.View 
-						key={Math.random()}
-						style={[styles.card, cardSize, {
-							transform: [interpolations[index - 1][0]],
-							backgroundColor: colors[key]
-						}]
-					} />
-				);
-			}
-			
-			return null;
-		}).reverse()}
-		<Text style={{position: 'absolute', bottom: 0}} onPress={undo}>Try again</Text>
+				// Cards in stack
+				if(Math.abs(currentIndex - key) < stackLength) {
+					return (
+						<Animated.View 
+							key={Math.random()}
+							style={[styles.card, cardSize, {
+								transform: interpolations[index - 1],
+								backgroundColor: colors[key],
+							}]
+						} />
+					);
+				}
+				
+				// Last card hidden under stack
+				if(index === stackLength) {
+					return (
+						<Animated.View 
+							key={Math.random()}
+							style={[styles.card, cardSize, {
+								transform: [interpolations[index - 1][0]],
+								backgroundColor: colors[key]
+							}]
+						} />
+					);
+				}
+				
+				return null;
+			}).reverse()}
+
+			<Fab
+				bottom={Units.x1}
+				left={Units.x2 + Units.x7}
+				backgroundColor={Colors.black}
+				icon="thumbs-down"
+				onPress={swipeLeft}
+			/>
+			<Fab
+				bottom={Units.x1}
+				right={Units.x2 + Units.x7}
+				backgroundColor={Colors.primary}
+				icon="thumbs-up"
+				onPress={swipeRight}
+			/>
+
+			<View style={styles.bottomWrapper}>
+				<Text style={styles.cardsLeft}>
+					{getCardsLeft({total: data.length, currentIndex})}
+				</Text>
+			</View>
 		</View>
 	);
 }
 
-Slideshow.defaultProps = {
+const SlideshowForwardedRef = forwardRef(Slideshow);
+
+SlideshowForwardedRef.defaultProps = {
 	stackLength: 3
-}
+};
 
 const styles = StyleSheet.create({
+	wrapper: {
+		flex: 1
+	},
 	card: {
 		borderRadius: Units.x1,
 		position: 'absolute'
+	},
+	bottomWrapper: {
+		position: 'absolute',
+		bottom: 0,
+		right: 0,
+		left: 0
+	},
+	cardsLeft: {
+		fontFamily: 'PTRootUI-Regular',
+		color: Colors.secondaryText,
+		textAlign: 'center',
+		lineHeight: 20,
+		fontSize: 14
 	}
 });
 
-export default Slideshow;
+export default SlideshowForwardedRef;

@@ -1,9 +1,11 @@
-import React, {Fragment} from 'react';
-import {View} from 'react-native';
+import React, {Fragment, useState, useRef, useEffect} from 'react';
+import {View, StyleSheet} from 'react-native';
 
 import Header from '../../commons/components/header/header';
 import Button from '../../commons/components/button/button';
 import Slideshow from '../../commons/components/slideshow/slideshow'
+
+import Units from '../../commons/units';
 
 const data = [{
 	title: 'Image 1',
@@ -28,18 +30,37 @@ const data = [{
 }];
 
 function Main({}) {
+	const [currentIndex, setCurrentIndex] = useState(0);
+
+	const slideshowRef = useRef();
+	const undo = () => slideshowRef.current.undo();
+	const handleOnSwipe = direction => console.log('swiped', direction);
+
 	return (
 		<Fragment>
 			<Header
-				left={<Button onPress={console.log} text="Undo" />}
+				left={<Button isDisabled={currentIndex === 0} onPress={undo} text="Undo" />}
 				title="My Mars"
 				right={<Button onPress={console.log} icon="heart-outlined" />}
 			/>
-			<View style={{padding: 16}}>
-			<Slideshow data={[1,2,3,4,5,6]} />
+			<View style={styles.slideshowWrapper}>
+				<Slideshow
+					ref={slideshowRef}
+					data={[1,2,3,4,5,6]}
+					onSwipe={handleOnSwipe}
+					currentIndex={currentIndex}
+					setCurrentIndex={setCurrentIndex}
+				/>
 			</View>
 		</Fragment>
 	);
 }
+
+const styles = StyleSheet.create({
+	slideshowWrapper: {
+		flexGrow: 1,
+		padding: Units.x2
+	}
+});
 
 export default Main;
