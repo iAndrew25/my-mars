@@ -11,7 +11,7 @@ function Button({icon, text, isDisabled, ...rest}) {
 		if(text) {
 			return <Text style={StyleSheet.compose(styles.text, isDisabled ? {color: Colors.disabled} : undefined)}>{text}</Text>
 		} else {
-			return <Icon name={icon} size={Units.x3} color={Colors.primary} />
+			return <Icon name={icon} size={Units.x3} color={isDisabled ? Colors.disabled : Colors.primary} />
 		}
 	}
 

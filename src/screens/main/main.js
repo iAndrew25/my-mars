@@ -13,10 +13,18 @@ import {getCardsLeft} from './main.utils';
 
 function Main({}) {
 	const {isLoading, error, data} = useFetch();
+	console.log("isLoading", isLoading);
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const slideshowRef = useRef();
-	const undo = () => slideshowRef.current.undo();
+	const undo = () => {
+		if(currentIndex < data.length) {
+			slideshowRef.current.undo();
+		} else {
+			setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1);
+		}
+	};
+
 	const handleOnSwipe = direction => console.log('swiped', direction);
 
 	const renderSlideshow = () => {
@@ -55,21 +63,21 @@ function Main({}) {
 		<Fragment>
 			<Header
 				left={<Button isDisabled={currentIndex === 0} onPress={undo} text="Undo" />}
-				right={<Button onPress={console.log} icon="heart-outlined" />}
+				right={<Button isDisabled={isLoading} onPress={console.log} icon="heart-outlined" />}
 				title="My Mars"
 			/>
 			<View style={styles.slideshowWrapper}>
 				{isLoading 
-					? renderLoader() 
-					: Boolean(error) 
-						? renderErrorMessage() 
+					? renderLoader()
+					: Boolean(error)
+						? renderErrorMessage()
 						: renderSlideshow()
 				}
 				<View style={styles.bottomWrapper}>
 					<Text style={styles.text}>
 						{isLoading ? 'Downloading' : getCardsLeft({total: data.length, currentIndex})}
 					</Text>
-				</View>				
+				</View>
 			</View>
 		</Fragment>
 	);
