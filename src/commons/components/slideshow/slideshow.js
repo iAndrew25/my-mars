@@ -69,6 +69,7 @@ function Slideshow({data, stackLength}) {
 	const windowDimensions = useWindowDimensions();
 	const cardSize = getCardSize(windowDimensions);
 	const pan = useRef(new Animated.Value(0)).current;
+	const previousDirections = useRef([]).current;
 	const interpolations = getInterpolations({stackLength, width: windowDimensions.width}).map(({scale, translateY}) => ([{
 		scaleX: pan.interpolate(scale)
 	}, {
@@ -76,8 +77,8 @@ function Slideshow({data, stackLength}) {
 	}]));
 
 	const swipe = direction => () => {
-		console.log("direction", direction);
 		pan.setValue(0);
+		previousDirections.push(direction);
 		setCurrentIndex(prevCurrentIndex => prevCurrentIndex + 1);
 	}
 
@@ -100,7 +101,7 @@ function Slideshow({data, stackLength}) {
 						restDisplacementThreshold: 100,
 						restSpeedThreshold: 100,
 						useNativeDriver: true
-					}).start(swipe(Math.sign(dx) === 1 ? DIRECTIONS.RIGHT : DIRECTIONS.LEFT));
+					}).start(swipe(Math.sign(dx)));
 				}
 			}
 		})
@@ -108,8 +109,7 @@ function Slideshow({data, stackLength}) {
 
 	const undo = () => {
 		setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1)
-		pan.setValue(windowDimensions.width);
-		
+		pan.setValue(windowDimensions.width * (previousDirections.pop() || 1));
 		Animated.spring(pan, {
 			toValue: 0,
 			useNativeDriver: true
@@ -120,7 +120,7 @@ function Slideshow({data, stackLength}) {
 		<View>
 		{data.map((i, key) => {
 			const index = key - currentIndex;
-			
+
 			if(currentIndex > key) {
 				return null
 			}
