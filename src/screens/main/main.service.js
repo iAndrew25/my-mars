@@ -5,17 +5,24 @@ const URL = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol
 
 const useFetch = () => {
 	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState('');
 	const [data, setData] = useState([]);
 
 	useEffect(() => {
 		(async () => {
-			const response = await (await fetch(URL)).json();
+			try {
+				const response = await (await fetch(URL)).json();
 
-			setData(response.photos)
+				setData(response.photos);
+				setIsLoading(false);
+			} catch(error) {
+				setIsLoading(false);
+				setError('We were not able to retrive the photos.\nPlease try again later.')
+			}
 		})()
 	}, [])
 
-	return {isLoading, data};
+	return {isLoading, error, data};
 };
 
 export {useFetch};
