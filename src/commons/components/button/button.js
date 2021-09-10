@@ -16,7 +16,7 @@ function Button({icon, text, isDisabled, ...rest}) {
 	}
 
 	return (
-		<TouchableHighlight style={styles.wrapper} underlayColor={Colors.underlay} {...rest}>
+		<TouchableHighlight disabled={isDisabled} style={styles.wrapper} underlayColor={Colors.underlay} {...rest}>
 			{renderContent()}
 		</TouchableHighlight>
 	);
