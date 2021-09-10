@@ -2,8 +2,9 @@ import React, {useRef, useState, useEffect, forwardRef, useImperativeHandle} fro
 import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } from 'react-native';
 
 import Fab from './fab/fab';
-import {Directions, getCardSize, getCardsLeft, getInterpolationData} from './slideshow.utils';
+import {getCardSize, getCardsLeft, getInterpolationData} from './slideshow.utils';
 
+import {Directions} from '../../constants';
 import Colors from '../../colors';
 import Units from '../../units';
 
@@ -149,12 +150,6 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 				icon="thumbs-up"
 				onPress={swipeRight}
 			/>
-
-			<View style={styles.bottomWrapper}>
-				<Text style={styles.cardsLeft}>
-					{getCardsLeft({total: data.length, currentIndex})}
-				</Text>
-			</View>
 		</View>
 	);
 }
@@ -170,21 +165,8 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	card: {
-		borderRadius: Units.x1,
-		position: 'absolute'
-	},
-	bottomWrapper: {
 		position: 'absolute',
-		bottom: 0,
-		right: 0,
-		left: 0
-	},
-	cardsLeft: {
-		fontFamily: 'PTRootUI-Regular',
-		color: Colors.secondaryText,
-		textAlign: 'center',
-		lineHeight: 20,
-		fontSize: 14
+		borderRadius: Units.x1
 	}
 });
 

@@ -17,16 +17,16 @@ function Header({left, title, right}) {
 const styles = StyleSheet.create({
 	wrapper: {
 		height: Units.x7,
-		paddingHorizontal: Units.x1,
+		alignItems: 'center',
 		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center'
+		paddingHorizontal: Units.x1,
+		justifyContent: 'space-between'
 	},
 	title: {
 		fontSize: 18,
 		lineHeight: 24,
-		fontFamily: 'PTRootUI-Medium',
-		color: Colors.primaryColor
+		color: Colors.primaryColor,
+		fontFamily: 'PTRootUI-Medium'
 	}
 });
 

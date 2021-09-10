@@ -1,11 +1,14 @@
 import React, {Fragment, useState, useRef, useEffect} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 import Header from '../../commons/components/header/header';
 import Button from '../../commons/components/button/button';
 import Slideshow from '../../commons/components/slideshow/slideshow'
 
+import Colors from '../../commons/colors';
 import Units from '../../commons/units';
+
+import {getCardsLeft} from './main.utils';
 
 const data = [{
 	title: 'Image 1',
@@ -51,6 +54,11 @@ function Main({}) {
 					currentIndex={currentIndex}
 					setCurrentIndex={setCurrentIndex}
 				/>
+			<View style={styles.bottomWrapper}>
+				<Text style={styles.cardsLeft}>
+					{getCardsLeft({total: data.length, currentIndex})}
+				</Text>
+			</View>				
 			</View>
 		</Fragment>
 	);
@@ -60,6 +68,19 @@ const styles = StyleSheet.create({
 	slideshowWrapper: {
 		flexGrow: 1,
 		padding: Units.x2
+	},
+	bottomWrapper: {
+		position: 'absolute',
+		bottom: Units.x2,
+		right: 0,
+		left: 0
+	},
+	cardsLeft: {
+		fontFamily: 'PTRootUI-Regular',
+		color: Colors.secondaryText,
+		textAlign: 'center',
+		lineHeight: 20,
+		fontSize: 14
 	}
 });
 
