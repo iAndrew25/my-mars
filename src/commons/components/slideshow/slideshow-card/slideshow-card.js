@@ -1,17 +1,22 @@
 import React from 'react';
 import {ImageBackground, Text, StyleSheet} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import Units from '../../../units';
 import Colors from '../../../colors';
 
 import {parseDate} from './slideshow-card.utils';
 
+const gradient = ['rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0)'];
+
 function SlideshowCard({title, subtitle, date, pictureUrl}) {
 	return (
 		<ImageBackground source={{uri: pictureUrl}} resizeMode="cover" style={styles.wrapper}>
-			<Text style={styles.title}>{title}</Text>
-			<Text style={styles.text}>{subtitle}</Text>
-			<Text style={styles.text}>{parseDate(date)}</Text>
+			<LinearGradient colors={gradient} style={styles.textWrapper}>
+				<Text style={styles.title}>{title}</Text>
+				<Text style={styles.text}>{subtitle}</Text>
+				<Text style={styles.text}>{parseDate(date)}</Text>
+			</LinearGradient>
 		</ImageBackground>
 	)
 }
@@ -19,6 +24,8 @@ function SlideshowCard({title, subtitle, date, pictureUrl}) {
 const styles = StyleSheet.create({
 	wrapper: {
 		flex: 1,
+	},
+	textWrapper: {
 		padding: Units.x2
 	},
 	title: {
