@@ -28,7 +28,9 @@ const getInterpolationData = ({stackLength, width}) => {
 		return [...total, {
 			scaleX: {
 				inputRange,
-				outputRange: key === 0 ? initialScaleXOutput : [scaleX.outputRange[1], scaleX.outputRange[1] - 0.1, scaleX.outputRange[1]]
+				outputRange: key === 0
+					? initialScaleXOutput
+					: [scaleX.outputRange[1], scaleX.outputRange[1] - 0.1, scaleX.outputRange[1]]
 			},
 			translateY: {
 				inputRange,
@@ -38,7 +40,39 @@ const getInterpolationData = ({stackLength, width}) => {
 	}, []);
 }
 
+const getButtonsInterpolationData = ({width, pan}) => {
+	const inputRange = [-width, -width/2, 0, width/2, width];
+
+	return {
+		swipeLeft: {
+			opacity: pan.interpolate({
+				inputRange,
+				outputRange: [1, 1, 1, 0.5, 1]
+			}),
+			transform: [{
+				scale: pan.interpolate({
+					inputRange,
+					outputRange: [1, 1.2, 1, 0.9, 1]
+				})
+			}]
+		},
+		swipeRight: {
+			opacity: pan.interpolate({
+				inputRange,
+				outputRange: [1, 0.5, 1, 1, 1]
+			}),
+			transform: [{
+				scale: pan.interpolate({
+					inputRange,
+					outputRange: [1, 0.9, 1, 1.2, 1]
+				})
+			}]
+		}
+	}
+}
+
 export {
 	getCardSize,
-	getInterpolationData
+	getInterpolationData,
+	getButtonsInterpolationData
 };

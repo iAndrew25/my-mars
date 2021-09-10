@@ -3,7 +3,7 @@ import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } fr
 
 import Fab from './fab/fab';
 import SlideshowCard from './slideshow-card/slideshow-card';
-import {getCardSize, getCardsLeft, getInterpolationData} from './slideshow.utils';
+import {getCardSize, getCardsLeft, getInterpolationData, getButtonsInterpolationData} from './slideshow.utils';
 
 import {Directions} from '../../constants';
 import Colors from '../../colors';
@@ -14,8 +14,10 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 	const cardSize = getCardSize(windowDimensions, stackLength);
 	const pan = useRef(new Animated.Value(0)).current;
 	const previousDirections = useRef([]).current;
+
+	const swipeButtons = getButtonsInterpolationData({...windowDimensions, pan});
 	const interpolations = getInterpolationData({
-		width: windowDimensions.width,
+		...windowDimensions,
 		stackLength
 	}).map(({scaleX, translateY}) => ([{
 		scaleX: pan.interpolate(scaleX)
@@ -154,6 +156,7 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 				backgroundColor={Colors.black}
 				icon="thumbs-down"
 				onPress={swipeLeft}
+				{...swipeButtons.swipeLeft}
 			/>
 			<Fab
 				bottom={Units.x1}
@@ -161,6 +164,7 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 				backgroundColor={Colors.primary}
 				icon="thumbs-up"
 				onPress={swipeRight}
+				{...swipeButtons.swipeRight}
 			/>
 		</View>
 	);
