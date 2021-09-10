@@ -2,6 +2,7 @@ import React, {useRef, useState, useEffect, forwardRef, useImperativeHandle} fro
 import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } from 'react-native';
 
 import Fab from './fab/fab';
+import SlideshowCard from './slideshow-card/slideshow-card';
 import {getCardSize, getCardsLeft, getInterpolationData} from './slideshow.utils';
 
 import {Directions} from '../../constants';
@@ -85,7 +86,7 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 
 	return (
 		<View style={styles.wrapper}>
-			{data.map((i, key) => {
+			{data.map(({id, img_src, rover, earth_date, camera}, key) => {
 				const index = key - currentIndex;
 
 				// Swiped cards
@@ -97,13 +98,23 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 				if(currentIndex === key) {
 					return (
 						<Animated.View 
-							key={Math.random()} // temp
+							key={id}
 							{...panResponder.panHandlers}
 							style={[styles.card, cardSize, {
-								transform: [{ translateX: pan}, {translateY: Units.x2 * (stackLength - index - 1)}],
-								backgroundColor: colors[key],
+								transform: [{
+									translateX: pan
+								}, {
+									translateY: Units.x2 * (stackLength - index - 1)
+								}]
 							}]
-						} />
+						}>
+							<SlideshowCard
+								pictureUrl={img_src}
+								title={rover.name}
+								subtitle={camera.full_name}
+								date={earth_date}
+							/>
+						</Animated.View>
 					);
 				} 
 
@@ -111,12 +122,18 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 				if(Math.abs(currentIndex - key) < stackLength) {
 					return (
 						<Animated.View 
-							key={Math.random()}
+							key={id}
 							style={[styles.card, cardSize, {
-								transform: interpolations[index - 1],
-								backgroundColor: colors[key],
+								transform: interpolations[index - 1]
 							}]
-						} />
+						}>
+							<SlideshowCard
+								pictureUrl={img_src}
+								title={rover.name}
+								subtitle={camera.full_name}
+								date={earth_date}
+							/>
+						</Animated.View>
 					);
 				}
 				
@@ -124,12 +141,19 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 				if(index === stackLength) {
 					return (
 						<Animated.View 
-							key={Math.random()}
+							key={id}
 							style={[styles.card, cardSize, {
 								transform: [interpolations[index - 1][0]],
 								backgroundColor: colors[key]
 							}]
-						} />
+						}>
+							<SlideshowCard
+								pictureUrl={img_src}
+								title={rover.name}
+								subtitle={camera.full_name}
+								date={earth_date}
+							/>
+						</Animated.View>
 					);
 				}
 				
@@ -166,7 +190,8 @@ const styles = StyleSheet.create({
 	},
 	card: {
 		position: 'absolute',
-		borderRadius: Units.x1
+		borderRadius: Units.x1,
+		overflow: 'hidden'
 	}
 });
 
