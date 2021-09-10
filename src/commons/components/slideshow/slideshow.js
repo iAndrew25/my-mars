@@ -1,6 +1,7 @@
 import React, {useRef, useState} from 'react';
 import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } from 'react-native';
 
+import {getCardSize, getInterpolationData} from './slideshow.utils';
 import Units from '../../units';
 
 const colors = {
@@ -19,64 +20,17 @@ const DIRECTIONS = {
 	RIGHT: 'RIGHT'
 };
 
-const getCardSize = ({height, width}, stackLength) => {
-	const vertical = 56 + 16 + (16 * stackLength) + 56;
-	const horizontal = 16 * 2;
-
-	return {
-		width: width - horizontal,
-		height: height - vertical
-	};
-};
-const translateYConfig = []
-const config = {
-	0: Units.x6,
-	1: Units.x3,
-	2: Units.x0
-}
-
-const getInterpolations = ({stackLength, width}) => {
-	return Array(stackLength).fill().reduce((total, current, key) => {
-		const inputRange = [-width, 0, width];
-		const index = stackLength - key - 1;
-		// const initialScaleOut
-
-		if(key === 0) {
-			return [...total, {
-				scale: {
-					inputRange,
-					outputRange: [1, 0.9, 1]
-				},
-				translateY: {
-					inputRange,
-					outputRange: [Units.x2 * index, Units.x2 * (index - 1), Units.x2 * index]
-				}
-			}]
-		} else {
-			const {scale} = total[key - 1] || {scale: [{outputRange:[1, 0.9, 1]}]};
-
-			return [...total, {
-				scale: {
-					inputRange,
-					outputRange: [scale.outputRange[1], scale.outputRange[1] - 0.1, scale.outputRange[1]]
-				},
-				translateY: {
-					inputRange,
-					outputRange: [Units.x2 * index, Units.x2 * (index - 1), Units.x2 * index]
-				}
-			}];
-		}
-	}, []);
-}
-// 16 padding between header and slideshow
 function Slideshow({data, stackLength}) {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const windowDimensions = useWindowDimensions();
 	const cardSize = getCardSize(windowDimensions, stackLength);
 	const pan = useRef(new Animated.Value(0)).current;
 	const previousDirections = useRef([]).current;
-	const interpolations = getInterpolations({stackLength, width: windowDimensions.width}).map(({scale, translateY}) => ([{
-		scaleX: pan.interpolate(scale)
+	const interpolations = getInterpolationData({
+		width: windowDimensions.width,
+		stackLength
+	}).map(({scaleX, translateY}) => ([{
+		scaleX: pan.interpolate(scaleX)
 	}, {
 		translateY: pan.interpolate(translateY)
 	}]));
@@ -85,7 +39,7 @@ function Slideshow({data, stackLength}) {
 		pan.setValue(0);
 		previousDirections.push(direction);
 		setCurrentIndex(prevCurrentIndex => prevCurrentIndex + 1);
-	}
+	};
 
 	const panResponder = useRef(
 		PanResponder.create({
