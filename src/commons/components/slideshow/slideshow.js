@@ -9,17 +9,6 @@ import {Directions} from '../../constants';
 import Colors from '../../colors';
 import Units from '../../units';
 
-const colors = {
-	0: 'red',
-	1: 'blue',
-	2: 'green',
-	3: 'yellow',
-	4: 'pink',
-	5: 'purple',
-	6: 'tomato',
-	7: 'black',
-}
-
 function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, ref) {
 	const windowDimensions = useWindowDimensions();
 	const cardSize = getCardSize(windowDimensions, stackLength);
@@ -143,8 +132,7 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 						<Animated.View 
 							key={id}
 							style={[styles.card, cardSize, {
-								transform: [interpolations[index - 1][0]],
-								backgroundColor: colors[key]
+								transform: [interpolations[index - 1][0]]
 							}]
 						}>
 							<SlideshowCard
