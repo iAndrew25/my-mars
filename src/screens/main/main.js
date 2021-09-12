@@ -1,10 +1,13 @@
-import React, {Fragment, useState, useRef} from 'react';
+import React, {Fragment, useState, useRef, useContext} from 'react';
 import {ActivityIndicator, View, Text, StyleSheet} from 'react-native';
 
 import Header from '../../commons/components/header/header';
 import Button from '../../commons/components/button/button';
 import Slideshow from '../../commons/components/slideshow/slideshow'
 
+import {likeAction, undoAction} from '../../config/store/actions';
+import {AppContext} from '../../config/store/store';
+import {Directions} from '../../commons/constants';
 import Colors from '../../commons/colors';
 import Units from '../../commons/units';
 
@@ -12,51 +15,47 @@ import {useFetch} from './main.service';
 import {getCardsLeft} from './main.utils';
 
 function Main({}) {
+	const {store, dispatch} = useContext(AppContext);
 	const {isLoading, error, data} = useFetch();
-	console.log("isLoading", isLoading);
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const slideshowRef = useRef();
 	const undo = () => {
-		if(currentIndex < data.length) {
-			slideshowRef.current.undo();
-		} else {
-			setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1);
-		}
+		slideshowRef.current.undo() === Directions.right && dispatch(undoAction());
 	};
 
-	const handleOnSwipe = direction => console.log('swiped', direction);
-
-	const renderSlideshow = () => {
-		if(currentIndex < data.length) {
-			return (
-				<Slideshow
-					data={data}
-					ref={slideshowRef}
-					onSwipe={handleOnSwipe}
-					currentIndex={currentIndex}
-					setCurrentIndex={setCurrentIndex}
-				/>
-			);
-		} else {
-			return (
-				<View style={styles.centerWrapper}>
-					<Text style={styles.text}>No pictures left.</Text>
-				</View>
-			);
-		}
-	}
+	const handleOnSwipe = ({cardIndex, direction}) => {
+		Directions.right === direction && dispatch(likeAction(data[cardIndex]))
+	};
 
 	const renderLoader = () => (
 		<View style={styles.centerWrapper}>
 			<ActivityIndicator size="large" color={Colors.primary} />
-		</View>		
+		</View>
 	);
 
 	const renderErrorMessage = () => (
 		<View style={styles.centerWrapper}>
 			<Text style={styles.text}>{error}</Text>
 		</View>
+	);
+
+	const renderEmptyPlaceholder = () => (
+		<View style={styles.centerWrapper}>
+			<Text style={styles.text}>No pictures left.</Text>
+		</View>
+	);
+
+	const renderSlideshow = () => (
+		<Slideshow
+			data={data}
+			stackLength={3}
+			ref={slideshowRef}
+			onSwipe={handleOnSwipe}
+			currentIndex={currentIndex}
+			setCurrentIndex={setCurrentIndex}
+			renderEmptyPlaceholder={renderEmptyPlaceholder}
+		/>
 	);
 
 	return (

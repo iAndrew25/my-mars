@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect, forwardRef, useImperativeHandle} from 'react';
+import React, {Fragment, useRef, useState, useEffect, forwardRef, useImperativeHandle} from 'react';
 import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } from 'react-native';
 
 import Fab from './fab/fab';
@@ -9,7 +9,7 @@ import {Directions} from '../../constants';
 import Colors from '../../colors';
 import Units from '../../units';
 
-function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, ref) {
+function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex, renderEmptyPlaceholder}, ref) {
 	const windowDimensions = useWindowDimensions();
 	const cardSize = getCardSize(windowDimensions, stackLength);
 	const pan = useRef(new Animated.Value(0)).current;
@@ -67,16 +67,19 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 	).current;
 
 	const undo = () => {
-		setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1)
-		pan.setValue(windowDimensions.width * (previousDirections.pop() || 1));
+		const previousDirection = previousDirections.pop();
+		setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1);
+		pan.setValue(windowDimensions.width * (previousDirection || 1));
 		Animated.spring(pan, {
 			toValue: 0,
 			useNativeDriver: true
 		}).start();
+
+		return previousDirection;
 	}
 
-	return (
-		<View style={styles.wrapper}>
+	const renderSlideshow = () => (
+		<Fragment>
 			{data.map(({id, img_src, rover, earth_date, camera}, key) => {
 				const index = key - currentIndex;
 
@@ -166,15 +169,15 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex}, 
 				onPress={swipeRight}
 				{...swipeButtons.swipeRight}
 			/>
+		</Fragment>
+	);
+
+	return (
+		<View style={styles.wrapper}>
+			{currentIndex < data.length ? renderSlideshow() : renderEmptyPlaceholder()}
 		</View>
 	);
 }
-
-const SlideshowForwardedRef = forwardRef(Slideshow);
-
-SlideshowForwardedRef.defaultProps = {
-	stackLength: 3
-};
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -187,4 +190,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default SlideshowForwardedRef;
+export default forwardRef(Slideshow);
