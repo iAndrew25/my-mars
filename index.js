@@ -1,16 +1,17 @@
 import React from 'react';
 import {AppRegistry} from 'react-native';
-import Main from './src/screens/main/main';
-import {name as appName} from './app.json';
 
+import NavigationStack from './src/config/navigation/navigation-stack';
 import StoreProvider from './src/config/store/store';
 
+import {name as appName} from './app.json';
+
 function App() {
-    return (
-        <StoreProvider>
-            <Main />
-        </StoreProvider>
-    );
+	return (
+		<StoreProvider>
+			<NavigationStack />
+		</StoreProvider>
+	);
 };
 
 AppRegistry.registerComponent(appName, () => App);

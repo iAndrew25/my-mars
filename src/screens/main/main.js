@@ -14,10 +14,12 @@ import Units from '../../commons/units';
 import {useFetch} from './main.service';
 import {getCardsLeft} from './main.utils';
 
-function Main({}) {
-	const {store, dispatch} = useContext(AppContext);
+function Main({navigation}) {
+	const {dispatch} = useContext(AppContext);
 	const {isLoading, error, data} = useFetch();
 	const [currentIndex, setCurrentIndex] = useState(0);
+
+	const navigateToLikedPosts = () => navigation.navigate('LikedPosts');
 
 	const slideshowRef = useRef();
 	const undo = () => {
@@ -62,7 +64,7 @@ function Main({}) {
 		<Fragment>
 			<Header
 				left={<Button isDisabled={currentIndex === 0} onPress={undo} text="Undo" />}
-				right={<Button isDisabled={isLoading} onPress={console.log} icon="heart-outlined" />}
+				right={<Button isDisabled={isLoading} onPress={navigateToLikedPosts} icon="heart-outlined" />}
 				title="My Mars"
 			/>
 			<View style={styles.slideshowWrapper}>

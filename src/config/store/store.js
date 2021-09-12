@@ -6,7 +6,6 @@ const AppContext = createContext();
 
 function StoreProvider({children}) {
 	const [store, dispatch] = useReducer(reducer, initialStore);
-	console.log("StoreProvider", store);
 
 	return (
 		<AppContext.Provider value={{store, dispatch}}>
