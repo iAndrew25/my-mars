@@ -15,10 +15,7 @@ const Months = [
 	'September',
 	'October',
 	'November',
-	'December',
+	'December'
 ];
 
-export {
-	Months,
-	Directions
-};
+export { Months, Directions };

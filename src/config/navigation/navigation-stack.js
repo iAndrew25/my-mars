@@ -23,6 +23,6 @@ function NavigationStack() {
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
-};
+}
 
 export default NavigationStack;

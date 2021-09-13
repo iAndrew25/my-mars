@@ -1,11 +1,11 @@
 import React from 'react';
-import {AppRegistry} from 'react-native';
-import { Provider } from 'react-redux'
+import { AppRegistry } from 'react-native';
+import { Provider } from 'react-redux';
 
 import NavigationStack from './src/config/navigation/navigation-stack';
 import store from './src/config/store/store';
 
-import {name as appName} from './app.json';
+import { name as appName } from './app.json';
 
 function App() {
 	return (
@@ -13,6 +13,6 @@ function App() {
 			<NavigationStack />
 		</Provider>
 	);
-};
+}
 
 AppRegistry.registerComponent(appName, () => App);

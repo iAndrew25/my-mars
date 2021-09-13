@@ -1,11 +1,11 @@
-import React, {Fragment} from 'react';
-import {TouchableHighlight, Text, View, StyleSheet, Image} from 'react-native';
+import React, { Fragment } from 'react';
+import { TouchableHighlight, Text, View, StyleSheet, Image } from 'react-native';
 
-import {parseDate} from '../../../commons/utils/dates';
+import { parseDate } from '../../../commons/utils/dates';
 import Colors from '../../../commons/colors';
 import Units from '../../../commons/units';
 
-function PostCard({img_src, rover, earth_date, camera, onPress}) {
+function PostCard({ img_src, rover, earth_date, camera, onPress }) {
 	return (
 		<TouchableHighlight onPress={onPress} underlayColor={Colors.underlay} style={styles.wrapper}>
 			<Fragment>
@@ -16,10 +16,7 @@ function PostCard({img_src, rover, earth_date, camera, onPress}) {
 					</View>
 					<Text style={styles.camera}>{camera.full_name}</Text>
 				</View>
-				<Image
-					style={styles.image}
-					source={{uri: img_src}}
-				/>
+				<Image style={styles.image} source={{ uri: img_src }} />
 			</Fragment>
 		</TouchableHighlight>
 	);
@@ -37,19 +34,19 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between'
 	},
 	header: {
-		padding: Units.x1,
+		padding: Units.x1
 	},
 	name: {
 		fontFamily: 'PTRootUI-Bold',
 		color: Colors.primaryText,
 		lineHeight: 24,
-		fontSize: 16		
+		fontSize: 16
 	},
 	camera: {
 		fontFamily: 'PTRootUI-Medium',
 		color: Colors.primaryText,
 		lineHeight: 20,
-		fontSize: 14		
+		fontSize: 14
 	},
 	date: {
 		fontFamily: 'PTRootUI-Regular',

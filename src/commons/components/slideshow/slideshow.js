@@ -1,29 +1,32 @@
-import React, {Fragment, useRef, useState, useEffect, forwardRef, useImperativeHandle} from 'react';
-import {Animated, PanResponder, View, useWindowDimensions, Text, StyleSheet } from 'react-native';
+import React, { Fragment, useRef, forwardRef, useImperativeHandle } from 'react';
+import { Animated, PanResponder, View, useWindowDimensions, StyleSheet } from 'react-native';
 
 import Fab from './fab/fab';
 import SlideshowCard from './slideshow-card/slideshow-card';
-import {getCardSize, getCardsLeft, getInterpolationData, getButtonsInterpolationData} from './slideshow.utils';
+import { getCardSize, getInterpolationData, getButtonsInterpolationData } from './slideshow.utils';
 
-import {Directions} from '../../constants';
+import { Directions } from '../../constants';
 import Colors from '../../colors';
 import Units from '../../units';
 
-function Slideshow({data, onSwipe, stackLength, currentIndex, renderEmptyPlaceholder}, ref) {
+function Slideshow({ data, onSwipe, stackLength, currentIndex, renderEmptyPlaceholder }, ref) {
 	const windowDimensions = useWindowDimensions();
 	const cardSize = getCardSize(windowDimensions, stackLength);
 	const translateX = useRef(new Animated.Value(0)).current;
 	const previousDirections = useRef([]).current;
 
-	const swipeButtons = getButtonsInterpolationData({...windowDimensions, translateX});
+	const swipeButtons = getButtonsInterpolationData({ ...windowDimensions, translateX });
 	const interpolations = getInterpolationData({
 		...windowDimensions,
 		stackLength
-	}).map(({scaleX, translateY}) => ([{
-		scaleX: translateX.interpolate(scaleX)
-	}, {
-		translateY: translateX.interpolate(translateY)
-	}]));
+	}).map(({ scaleX, translateY }) => [
+		{
+			scaleX: translateX.interpolate(scaleX)
+		},
+		{
+			translateY: translateX.interpolate(translateY)
+		}
+	]);
 
 	useImperativeHandle(ref, () => ({
 		undo
@@ -38,9 +41,9 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, renderEmptyPlaceho
 		}).start(() => {
 			translateX.setValue(0);
 			previousDirections.push(direction);
-			onSwipe({direction});
+			onSwipe({ direction });
 		});
-	}
+	};
 
 	const swipeRight = () => swipe(Directions.right);
 	const swipeLeft = () => swipe(Directions.left);
@@ -48,18 +51,18 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, renderEmptyPlaceho
 	const panResponder = useRef(
 		PanResponder.create({
 			onMoveShouldSetPanResponder: () => true,
-			onPanResponderMove: (event, {dx}) => translateX.setValue(dx),
-			onPanResponderRelease: (event, {dx}) => {
-				if(Math.abs(dx) < cardSize.width / 4) {
+			onPanResponderMove: (event, { dx }) => translateX.setValue(dx),
+			onPanResponderRelease: (event, { dx }) => {
+				if (Math.abs(dx) < cardSize.width / 4) {
 					Animated.spring(translateX, {
 						toValue: 0,
 						friction: 3,
 						useNativeDriver: true
 					}).start(() => {
-						translateX.setValue(0)
-					})
+						translateX.setValue(0);
+					});
 				} else {
-					swipe(Math.sign(dx))
+					swipe(Math.sign(dx));
 				}
 			}
 		})
@@ -75,82 +78,81 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, renderEmptyPlaceho
 		}).start();
 
 		return previousDirection;
-	}
+	};
 
 	const renderSlideshow = () => (
 		<Fragment>
-			{data.map(({id, img_src, rover, earth_date, camera}, key) => {
-				const index = key - currentIndex;
+			{data
+				.map(({ id, img_src, rover, earth_date, camera }, key) => {
+					const index = key - currentIndex;
 
-				// Swiped cards
-				if(currentIndex > key) {
-					return null
-				}
+					// Swiped cards
+					if (currentIndex > key) {
+						return null;
+					}
 
-				// Current card
-				if(currentIndex === key) {
-					return (
-						<Animated.View 
-							key={id}
-							{...panResponder.panHandlers}
-							style={[styles.card, cardSize, {
-								transform: [{
-									translateX
-								}, {
-									translateY: Units.x2 * (stackLength - index - 1)
-								}]
-							}]
-						}>
-							<SlideshowCard
-								pictureUrl={img_src}
-								title={rover.name}
-								subtitle={camera.full_name}
-								date={earth_date}
-							/>
-						</Animated.View>
-					);
-				} 
+					// Current card
+					if (currentIndex === key) {
+						return (
+							<Animated.View
+								key={id}
+								{...panResponder.panHandlers}
+								style={[
+									styles.card,
+									cardSize,
+									{
+										transform: [
+											{
+												translateX
+											},
+											{
+												translateY: Units.x2 * (stackLength - index - 1)
+											}
+										]
+									}
+								]}>
+								<SlideshowCard pictureUrl={img_src} title={rover.name} subtitle={camera.full_name} date={earth_date} />
+							</Animated.View>
+						);
+					}
 
-				// Cards in stack
-				if(Math.abs(currentIndex - key) < stackLength) {
-					return (
-						<Animated.View 
-							key={id}
-							style={[styles.card, cardSize, {
-								transform: interpolations[index - 1]
-							}]
-						}>
-							<SlideshowCard
-								pictureUrl={img_src}
-								title={rover.name}
-								subtitle={camera.full_name}
-								date={earth_date}
-							/>
-						</Animated.View>
-					);
-				}
-				
-				// Last card hidden under stack
-				if(index === stackLength) {
-					return (
-						<Animated.View 
-							key={id}
-							style={[styles.card, cardSize, {
-								transform: [interpolations[index - 1][0]]
-							}]
-						}>
-							<SlideshowCard
-								pictureUrl={img_src}
-								title={rover.name}
-								subtitle={camera.full_name}
-								date={earth_date}
-							/>
-						</Animated.View>
-					);
-				}
-				
-				return null;
-			}).reverse()}
+					// Cards in stack
+					if (Math.abs(currentIndex - key) < stackLength) {
+						return (
+							<Animated.View
+								key={id}
+								style={[
+									styles.card,
+									cardSize,
+									{
+										transform: interpolations[index - 1]
+									}
+								]}>
+								<SlideshowCard pictureUrl={img_src} title={rover.name} subtitle={camera.full_name} date={earth_date} />
+							</Animated.View>
+						);
+					}
+
+					// Last card hidden under stack
+					if (index === stackLength) {
+						return (
+							<Animated.View
+								key={id}
+								style={[
+									styles.card,
+									cardSize,
+									{
+										transform: [interpolations[index - 1][0]]
+									}
+								]}>
+								<SlideshowCard pictureUrl={img_src} title={rover.name} subtitle={camera.full_name} date={earth_date} />
+							</Animated.View>
+						);
+					}
+
+					return null;
+				})
+				.reverse()}
 
 			<Fab
 				bottom={Units.x1}
@@ -172,9 +174,7 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, renderEmptyPlaceho
 	);
 
 	return (
-		<View style={styles.wrapper}>
-			{currentIndex < data.length ? renderSlideshow() : renderEmptyPlaceholder()}
-		</View>
+		<View style={styles.wrapper}>{currentIndex < data.length ? renderSlideshow() : renderEmptyPlaceholder()}</View>
 	);
 }
 

@@ -1,11 +1,11 @@
 import React from 'react';
-import {Animated, StyleSheet, TouchableOpacity} from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
 import Units from '../../../units';
 import Colors from '../../../colors';
 
-function Fab({icon, onPress, ...rest}) {
+function Fab({ icon, onPress, ...rest }) {
 	return (
 		<Animated.View style={StyleSheet.compose(styles.wrapper, rest)}>
 			<TouchableOpacity style={styles.content} activeOpacity={0.7} onPress={onPress}>
@@ -28,6 +28,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center'
 	}
-})
+});
 
 export default Fab;

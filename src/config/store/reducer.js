@@ -1,5 +1,5 @@
-const reducer = (store, {type, payload}) => {
-	switch(type) {
+const reducer = (store, { type, payload }) => {
+	switch (type) {
 		case 'LIKE':
 			return {
 				...store,
@@ -15,6 +15,6 @@ const reducer = (store, {type, payload}) => {
 		default:
 			return store;
 	}
-}
+};
 
 export default reducer;

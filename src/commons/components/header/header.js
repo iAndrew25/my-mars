@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 import Units from '../../units';
 import Colors from '../../colors';
 
-function Header({left, title, right}) {
+function Header({ left, title, right }) {
 	return (
 		<View style={styles.wrapper}>
 			{left}
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 		lineHeight: 24,
 		textAlign: 'center',
 		color: Colors.primaryColor,
-		fontFamily: 'PTRootUI-Medium',
+		fontFamily: 'PTRootUI-Medium'
 	},
 	centerText: {
 		marginRight: Units.x4

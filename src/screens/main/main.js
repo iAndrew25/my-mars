@@ -1,5 +1,5 @@
-import React, {Fragment, useState, useRef} from 'react';
-import {ActivityIndicator, View, Text, StyleSheet} from 'react-native';
+import React, { Fragment, useState, useRef } from 'react';
+import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import Placeholder from '../../commons/components/placeholder/placeholder';
@@ -7,18 +7,17 @@ import Slideshow from '../../commons/components/slideshow/slideshow';
 import Header from '../../commons/components/header/header';
 import Button from '../../commons/components/button/button';
 
-import {likeAction, undoAction} from '../../config/store/actions';
-import {AppContext} from '../../config/store/store';
-import {Directions} from '../../commons/constants';
+import { likeAction, undoAction } from '../../config/store/actions';
+import { Directions } from '../../commons/constants';
 import Colors from '../../commons/colors';
 import Units from '../../commons/units';
 
-import {useFetch} from './main.service';
-import {getCardsLeft} from './main.utils';
+import { useFetch } from './main.service';
+import { getCardsLeft } from './main.utils';
 
-function Main({navigation}) {
+function Main({ navigation }) {
 	const dispatch = useDispatch();
-	const {isLoading, error, data} = useFetch();
+	const { isLoading, error, data } = useFetch();
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const navigateToLikedPosts = () => navigation.navigate('LikedPosts');
@@ -29,11 +28,11 @@ function Main({navigation}) {
 		setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1);
 	};
 
-	const handleOnSwipe = ({direction}) => {
+	const handleOnSwipe = ({ direction }) => {
 		setCurrentIndex(prevCurrentIndex => {
 			Directions.right === direction && dispatch(likeAction(data[prevCurrentIndex]));
 
-			return prevCurrentIndex + 1
+			return prevCurrentIndex + 1;
 		});
 	};
 
@@ -43,13 +42,9 @@ function Main({navigation}) {
 		</Placeholder>
 	);
 
-	const renderErrorMessage = () => (
-		<Placeholder text={error} />
-	);
+	const renderErrorMessage = () => <Placeholder text={error} />;
 
-	const renderEmptyPlaceholder = () => (
-		<Placeholder text="No pictures left." />
-	);
+	const renderEmptyPlaceholder = () => <Placeholder text="No pictures left." />;
 
 	const renderSlideshow = () => (
 		<Slideshow
@@ -71,15 +66,10 @@ function Main({navigation}) {
 				title="My Mars"
 			/>
 			<View style={styles.slideshowWrapper}>
-				{isLoading 
-					? renderLoader()
-					: Boolean(error)
-						? renderErrorMessage()
-						: renderSlideshow()
-				}
+				{isLoading ? renderLoader() : error ? renderErrorMessage() : renderSlideshow()}
 				<View style={styles.bottomWrapper}>
 					<Text style={styles.text}>
-						{isLoading ? 'Downloading' : getCardsLeft({total: data.length, currentIndex})}
+						{isLoading ? 'Downloading' : getCardsLeft({ total: data.length, currentIndex })}
 					</Text>
 				</View>
 			</View>

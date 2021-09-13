@@ -1,26 +1,16 @@
-import React, {Fragment, useContext} from 'react';
-import {ScrollView, View, Text, FlatList, StyleSheet, Image} from 'react-native';
-import { useSelector } from 'react-redux';
-import {AppContext} from '../../config/store/store';
+import React, { Fragment } from 'react';
+import { StyleSheet, Image } from 'react-native';
 
 import Header from '../../commons/components/header/header';
 import Button from '../../commons/components/button/button';
 
-import Units from '../../commons/units';
-
-function Post({navigation, route}) {
-	const {rover, img_src} = route.params;
+function Post({ navigation, route }) {
+	const { rover, img_src } = route.params;
 
 	return (
 		<Fragment>
-			<Header
-				left={<Button icon="chevron-left" onPress={navigation.goBack}/>}
-				title={rover.name}
-			/>
-			<Image
-				style={styles.image}
-				source={{uri: img_src}}
-			/>
+			<Header left={<Button icon="chevron-left" onPress={navigation.goBack} />} title={rover.name} />
+			<Image style={styles.image} source={{ uri: img_src }} />
 		</Fragment>
 	);
 }
@@ -30,7 +20,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		width: '100%',
 		height: '100%',
-		resizeMode: 'cover'		
+		resizeMode: 'cover'
 	}
 });
 

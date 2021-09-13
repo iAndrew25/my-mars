@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 
 const API_KEY = 'VuTvEDJkGmCmHTDh7XMjf2z8FsZkXgI62sfe7upf';
 const URL = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10&api_key=${API_KEY}`;
@@ -15,14 +15,14 @@ const useFetch = () => {
 
 				setData(response.photos);
 				setIsLoading(false);
-			} catch(error) {
+			} catch (_error) {
 				setIsLoading(false);
-				setError('We were not able to retrive the photos.\nPlease try again later.')
+				setError('We were not able to retrive the photos.\nPlease try again later.');
 			}
-		})()
-	}, [])
+		})();
+	}, []);
 
-	return {isLoading, error, data};
+	return { isLoading, error, data };
 };
 
-export {useFetch};
+export { useFetch };

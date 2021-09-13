@@ -1,4 +1,3 @@
-import React, {createContext, useReducer, useContext} from 'react';
 import { createStore } from 'redux';
 
 import reducer from './reducer';
