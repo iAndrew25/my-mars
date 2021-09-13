@@ -1,9 +1,11 @@
-import React, {Fragment, useState, useRef, useContext} from 'react';
+import React, {Fragment, useState, useRef} from 'react';
 import {ActivityIndicator, View, Text, StyleSheet} from 'react-native';
+import { useDispatch } from 'react-redux';
 
+import Placeholder from '../../commons/components/placeholder/placeholder';
+import Slideshow from '../../commons/components/slideshow/slideshow';
 import Header from '../../commons/components/header/header';
 import Button from '../../commons/components/button/button';
-import Slideshow from '../../commons/components/slideshow/slideshow'
 
 import {likeAction, undoAction} from '../../config/store/actions';
 import {AppContext} from '../../config/store/store';
@@ -15,7 +17,7 @@ import {useFetch} from './main.service';
 import {getCardsLeft} from './main.utils';
 
 function Main({navigation}) {
-	const {dispatch} = useContext(AppContext);
+	const dispatch = useDispatch();
 	const {isLoading, error, data} = useFetch();
 	const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -24,28 +26,29 @@ function Main({navigation}) {
 	const slideshowRef = useRef();
 	const undo = () => {
 		slideshowRef.current.undo() === Directions.right && dispatch(undoAction());
+		setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1);
 	};
 
-	const handleOnSwipe = ({cardIndex, direction}) => {
-		Directions.right === direction && dispatch(likeAction(data[cardIndex]))
+	const handleOnSwipe = ({direction}) => {
+		setCurrentIndex(prevCurrentIndex => {
+			Directions.right === direction && dispatch(likeAction(data[prevCurrentIndex]));
+
+			return prevCurrentIndex + 1
+		});
 	};
 
 	const renderLoader = () => (
-		<View style={styles.centerWrapper}>
+		<Placeholder>
 			<ActivityIndicator size="large" color={Colors.primary} />
-		</View>
+		</Placeholder>
 	);
 
 	const renderErrorMessage = () => (
-		<View style={styles.centerWrapper}>
-			<Text style={styles.text}>{error}</Text>
-		</View>
+		<Placeholder text={error} />
 	);
 
 	const renderEmptyPlaceholder = () => (
-		<View style={styles.centerWrapper}>
-			<Text style={styles.text}>No pictures left.</Text>
-		</View>
+		<Placeholder text="No pictures left." />
 	);
 
 	const renderSlideshow = () => (
@@ -88,11 +91,6 @@ const styles = StyleSheet.create({
 	slideshowWrapper: {
 		flexGrow: 1,
 		padding: Units.x2
-	},
-	centerWrapper: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center'
 	},
 	bottomWrapper: {
 		position: 'absolute',

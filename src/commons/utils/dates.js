@@ -1,4 +1,4 @@
-import {Months} from '../../../constants';
+import {Months} from '../constants';
 
 const parseDate = date => {
 	const [year, month, day] = date.split('-');

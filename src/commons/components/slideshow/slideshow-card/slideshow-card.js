@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Units from '../../../units';
 import Colors from '../../../colors';
 
-import {parseDate} from './slideshow-card.utils';
+import {parseDate} from '../../../utils/dates';
 
 const gradient = ['rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0)'];
 

@@ -9,20 +9,20 @@ import {Directions} from '../../constants';
 import Colors from '../../colors';
 import Units from '../../units';
 
-function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex, renderEmptyPlaceholder}, ref) {
+function Slideshow({data, onSwipe, stackLength, currentIndex, renderEmptyPlaceholder}, ref) {
 	const windowDimensions = useWindowDimensions();
 	const cardSize = getCardSize(windowDimensions, stackLength);
-	const pan = useRef(new Animated.Value(0)).current;
+	const translateX = useRef(new Animated.Value(0)).current;
 	const previousDirections = useRef([]).current;
 
-	const swipeButtons = getButtonsInterpolationData({...windowDimensions, pan});
+	const swipeButtons = getButtonsInterpolationData({...windowDimensions, translateX});
 	const interpolations = getInterpolationData({
 		...windowDimensions,
 		stackLength
 	}).map(({scaleX, translateY}) => ([{
-		scaleX: pan.interpolate(scaleX)
+		scaleX: translateX.interpolate(scaleX)
 	}, {
-		translateY: pan.interpolate(translateY)
+		translateY: translateX.interpolate(translateY)
 	}]));
 
 	useImperativeHandle(ref, () => ({
@@ -30,16 +30,15 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex, r
 	}));
 
 	const swipe = direction => {
-		Animated.spring(pan, {
+		Animated.spring(translateX, {
 			toValue: direction * windowDimensions.width,
 			restDisplacementThreshold: 100,
 			restSpeedThreshold: 100,
 			useNativeDriver: true
 		}).start(() => {
-			pan.setValue(0);
+			translateX.setValue(0);
 			previousDirections.push(direction);
-			onSwipe({direction, cardIndex: currentIndex});
-			setCurrentIndex(prevCurrentIndex => prevCurrentIndex + 1);
+			onSwipe({direction});
 		});
 	}
 
@@ -49,15 +48,15 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex, r
 	const panResponder = useRef(
 		PanResponder.create({
 			onMoveShouldSetPanResponder: () => true,
-			onPanResponderMove: (event, {dx}) => pan.setValue(dx),
+			onPanResponderMove: (event, {dx}) => translateX.setValue(dx),
 			onPanResponderRelease: (event, {dx}) => {
 				if(Math.abs(dx) < cardSize.width / 4) {
-					Animated.spring(pan, {
+					Animated.spring(translateX, {
 						toValue: 0,
 						friction: 3,
 						useNativeDriver: true
 					}).start(() => {
-						pan.setValue(0)
+						translateX.setValue(0)
 					})
 				} else {
 					swipe(Math.sign(dx))
@@ -68,9 +67,9 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex, r
 
 	const undo = () => {
 		const previousDirection = previousDirections.pop();
-		setCurrentIndex(prevCurrentIndex => prevCurrentIndex - 1);
-		pan.setValue(windowDimensions.width * (previousDirection || 1));
-		Animated.spring(pan, {
+		translateX.setValue(windowDimensions.width * (previousDirection || 1));
+
+		Animated.spring(translateX, {
 			toValue: 0,
 			useNativeDriver: true
 		}).start();
@@ -96,7 +95,7 @@ function Slideshow({data, onSwipe, stackLength, currentIndex, setCurrentIndex, r
 							{...panResponder.panHandlers}
 							style={[styles.card, cardSize, {
 								transform: [{
-									translateX: pan
+									translateX
 								}, {
 									translateY: Units.x2 * (stackLength - index - 1)
 								}]

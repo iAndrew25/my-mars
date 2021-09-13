@@ -40,29 +40,29 @@ const getInterpolationData = ({stackLength, width}) => {
 	}, []);
 }
 
-const getButtonsInterpolationData = ({width, pan}) => {
+const getButtonsInterpolationData = ({width, translateX}) => {
 	const inputRange = [-width, -width/2, 0, width/2, width];
 
 	return {
 		swipeLeft: {
-			opacity: pan.interpolate({
+			opacity: translateX.interpolate({
 				inputRange,
 				outputRange: [1, 1, 1, 0.5, 1]
 			}),
 			transform: [{
-				scale: pan.interpolate({
+				scale: translateX.interpolate({
 					inputRange,
 					outputRange: [1, 1.2, 1, 0.9, 1]
 				})
 			}]
 		},
 		swipeRight: {
-			opacity: pan.interpolate({
+			opacity: translateX.interpolate({
 				inputRange,
 				outputRange: [1, 0.5, 1, 1, 1]
 			}),
 			transform: [{
-				scale: pan.interpolate({
+				scale: translateX.interpolate({
 					inputRange,
 					outputRange: [1, 0.9, 1, 1.2, 1]
 				})

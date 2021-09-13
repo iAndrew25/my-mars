@@ -8,7 +8,7 @@ function Header({left, title, right}) {
 	return (
 		<View style={styles.wrapper}>
 			{left}
-			<Text style={styles.title}>{title}</Text>
+			<Text style={StyleSheet.compose(styles.title, right ? undefined : styles.centerText)}>{title}</Text>
 			{right}
 		</View>
 	);
@@ -23,10 +23,15 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between'
 	},
 	title: {
+		flex: 1,
 		fontSize: 18,
 		lineHeight: 24,
+		textAlign: 'center',
 		color: Colors.primaryColor,
-		fontFamily: 'PTRootUI-Medium'
+		fontFamily: 'PTRootUI-Medium',
+	},
+	centerText: {
+		marginRight: Units.x4
 	}
 });
 
