@@ -12,6 +12,7 @@ import Units from '../../commons/units';
 
 function LikedPosts({navigation}) {
 	const likedPosts = useSelector(store => store.likedPosts);
+	const handleOnNavigate = item => () => navigation.navigate('Post', item);
 
 	return (
 		<Fragment>
@@ -23,7 +24,7 @@ function LikedPosts({navigation}) {
 				<FlatList
 					data={likedPosts}
 					keyExtractor={({id}) => id}
-					renderItem={({item}) => <PostCard {...item} />}
+					renderItem={({item}) => <PostCard {...item} onPress={handleOnNavigate(item)} />}
 				/>
 			: <Placeholder text="There are no liked posts." />}
 		</Fragment>

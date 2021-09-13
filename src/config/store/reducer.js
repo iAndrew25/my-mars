@@ -1,5 +1,4 @@
 const reducer = (store, {type, payload}) => {
-	console.log("payload", payload?.id);
 	switch(type) {
 		case 'LIKE':
 			return {
