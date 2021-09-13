@@ -29,9 +29,10 @@ const styles = StyleSheet.create({
 		borderRadius: Units.x7
 	},
 	text: {
+		fontFamily: 'PTRootUI-Medium',
 		color: Colors.primary,
-		fontSize: 16,
-		lineHeight: 20
+		lineHeight: 20,
+		fontSize: 16
 	}
 });
 

@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		lineHeight: 28,
 		color: Colors.white,
-		fontFamily: 'PTRootUI-Medium',
-		marginBottom: Units.x1 / 2
+		marginBottom: Units.x1 / 2,
+		fontFamily: 'PTRootUI-Medium'
 	},
 	text: {
 		fontSize: 14,
