@@ -83,7 +83,7 @@ function Slideshow({ data, onSwipe, stackLength, currentIndex, renderEmptyPlaceh
 	const renderSlideshow = () => (
 		<Fragment>
 			{data
-				.map(({ id, img_src, rover, earth_date, camera }, key) => {
+				.map(({ id, src, photographer, photographer_url }, key) => {
 					const index = key - currentIndex;
 
 					// Swiped cards
@@ -111,7 +111,7 @@ function Slideshow({ data, onSwipe, stackLength, currentIndex, renderEmptyPlaceh
 										]
 									}
 								]}>
-								<SlideshowCard pictureUrl={img_src} title={rover.name} subtitle={camera.full_name} date={earth_date} />
+								<SlideshowCard pictureUrl={src.original} title={photographer} subtitle={photographer_url} />
 							</Animated.View>
 						);
 					}
@@ -128,7 +128,7 @@ function Slideshow({ data, onSwipe, stackLength, currentIndex, renderEmptyPlaceh
 										transform: interpolations[index - 1]
 									}
 								]}>
-								<SlideshowCard pictureUrl={img_src} title={rover.name} subtitle={camera.full_name} date={earth_date} />
+								<SlideshowCard pictureUrl={src.original} title={photographer} subtitle={photographer_url} />
 							</Animated.View>
 						);
 					}
@@ -145,7 +145,7 @@ function Slideshow({ data, onSwipe, stackLength, currentIndex, renderEmptyPlaceh
 										transform: [interpolations[index - 1][0]]
 									}
 								]}>
-								<SlideshowCard pictureUrl={img_src} title={rover.name} subtitle={camera.full_name} date={earth_date} />
+								<SlideshowCard pictureUrl={src.original} title={photographer} subtitle={photographer_url} />
 							</Animated.View>
 						);
 					}

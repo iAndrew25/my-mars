@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import {api_key} from '../../config/api_keys.json';
 
-const API_KEY = 'VuTvEDJkGmCmHTDh7XMjf2z8FsZkXgI62sfe7upf';
-const URL = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=10&api_key=${API_KEY}`;
+const URL = `https://api.pexels.com/v1/search?query=nature`;
 
 const useFetch = () => {
 	const [isLoading, setIsLoading] = useState(true);
@@ -11,7 +11,11 @@ const useFetch = () => {
 	useEffect(() => {
 		(async () => {
 			try {
-				const response = await (await fetch(URL)).json();
+				const response = await (await fetch(URL, {
+					headers: {
+						Authorization: api_key
+					}
+				})).json();
 
 				setData(response.photos);
 				setIsLoading(false);

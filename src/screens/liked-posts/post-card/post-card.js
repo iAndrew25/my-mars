@@ -5,18 +5,17 @@ import { parseDate } from '../../../commons/utils/dates';
 import Colors from '../../../commons/colors';
 import Units from '../../../commons/units';
 
-function PostCard({ img_src, rover, earth_date, camera, onPress }) {
+function PostCard({ src, photographer, photographer_url, onPress }) {
 	return (
 		<TouchableHighlight onPress={onPress} underlayColor={Colors.underlay} style={styles.wrapper}>
 			<Fragment>
 				<View style={styles.header}>
 					<View style={styles.topHeader}>
-						<Text style={styles.name}>{rover.name}</Text>
-						<Text style={styles.date}> · {parseDate(earth_date)}</Text>
+						<Text style={styles.photographer}>{photographer}</Text>
 					</View>
-					<Text style={styles.camera}>{camera.full_name}</Text>
+					<Text style={styles.photographerUrl}>{photographer_url}</Text>
 				</View>
-				<Image style={styles.image} source={{ uri: img_src }} />
+				<Image style={styles.image} source={{ uri: src.original }} />
 			</Fragment>
 		</TouchableHighlight>
 	);
@@ -36,13 +35,13 @@ const styles = StyleSheet.create({
 	header: {
 		padding: Units.x1
 	},
-	name: {
+	photographer: {
 		fontFamily: 'PTRootUI-Bold',
 		color: Colors.primaryText,
 		lineHeight: 24,
 		fontSize: 16
 	},
-	camera: {
+	photographerUrl: {
 		fontFamily: 'PTRootUI-Medium',
 		color: Colors.primaryText,
 		lineHeight: 20,

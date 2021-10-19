@@ -63,7 +63,7 @@ function Main({ navigation }) {
 			<Header
 				left={<Button isDisabled={currentIndex === 0} onPress={undo} text="Undo" />}
 				right={<Button isDisabled={isLoading} onPress={navigateToLikedPosts} icon="heart-outlined" />}
-				title="My Mars"
+				title="My Window"
 			/>
 			<View style={styles.slideshowWrapper}>
 				{isLoading ? renderLoader() : error ? renderErrorMessage() : renderSlideshow()}

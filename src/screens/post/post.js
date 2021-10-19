@@ -5,12 +5,12 @@ import Header from '../../commons/components/header/header';
 import Button from '../../commons/components/button/button';
 
 function Post({ navigation, route }) {
-	const { rover, img_src } = route.params;
+	const { photographer, src } = route.params;
 
 	return (
 		<Fragment>
-			<Header left={<Button icon="chevron-left" onPress={navigation.goBack} />} title={rover.name} />
-			<Image style={styles.image} source={{ uri: img_src }} />
+			<Header left={<Button icon="chevron-left" onPress={navigation.goBack} />} title={photographer} />
+			<Image style={styles.image} source={{ uri: src.original }} />
 		</Fragment>
 	);
 }
