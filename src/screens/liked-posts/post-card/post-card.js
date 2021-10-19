@@ -5,25 +5,19 @@ import { parseDate } from '../../../commons/utils/dates';
 import Colors from '../../../commons/colors';
 import Units from '../../../commons/units';
 
+import SlideshowCard from '../../../commons/components/slideshow/slideshow-card/slideshow-card';
+
 function PostCard({ src, photographer, photographer_url, onPress }) {
 	return (
 		<TouchableHighlight onPress={onPress} underlayColor={Colors.underlay} style={styles.wrapper}>
-			<Fragment>
-				<View style={styles.header}>
-					<View style={styles.topHeader}>
-						<Text style={styles.photographer}>{photographer}</Text>
-					</View>
-					<Text style={styles.photographerUrl}>{photographer_url}</Text>
-				</View>
-				<Image style={styles.image} source={{ uri: src.original }} />
-			</Fragment>
+			<SlideshowCard title={photographer} subtitle={photographer_url} pictureUrl={src.original} />
 		</TouchableHighlight>
 	);
 }
 
 const styles = StyleSheet.create({
 	wrapper: {
-		height: Units.x25,
+		height: Units.x24,
 		borderWidth: 1,
 		overflow: 'hidden',
 		borderRadius: Units.x2,
